@@ -25,7 +25,7 @@
     let subscription
     let qrCode
 
-    const contractAddress = "0x9df887C314FA61D38E9a1fb0dEC8b60A7e57cb40";
+    const contractAddress = "0x162E3a6CD2F258d83d5a66Fb68b1B5A7d0CffAb7";
     // TransferSingle event signature for tracking incoming NFT's
     const TSS = "0xc3d58168c5ae7397731d063d5bbf3d657854427343f4c083240f7aacaa2d0f62"
 
@@ -172,7 +172,7 @@
       const message = 'Burn my voucher and give me a drink'
 
       const sig = web3.utils.toHex(await web3.eth.personal.sign(message, providerAddress));
-      
+
       const result = {
         address: providerAddress,
         signature: sig
@@ -180,9 +180,7 @@
 
       qrCode = new QRCode(document.getElementById("qrcode"), JSON.stringify(result).padEnd(220));
 
-      const pretty = JSON.stringify(result, (k,v) => {
-        return k=='address' || k=='signature' ? v.substring(0,6) + '...' + v.substring(v.length - 4) : v
-      }, 2);
+      const pretty = JSON.stringify(result, null, 2)
       document.getElementById("message").innerHTML = '<pre style="white-space:pre-wrap">' + pretty + '</pre>';
     }
   </script>

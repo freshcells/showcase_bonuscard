@@ -21,8 +21,8 @@
     let jsonResult
     let sending = false
 
-    const contractAddress = "0x9df887C314FA61D38E9a1fb0dEC8b60A7e57cb40";
-    
+    const contractAddress = "0x162E3a6CD2F258d83d5a66Fb68b1B5A7d0CffAb7";
+
     const ABI = [
       {
         "inputs": [
@@ -153,7 +153,7 @@
         } catch(e) {
           console.log(e)
         }
-        html5QrCode = undefined       
+        html5QrCode = undefined
       }
       document.getElementById("camera-control").style.display = 'none';
     }
@@ -181,52 +181,13 @@
       await stopCamera();
       jsonResult = undefined
 
-      Html5Qrcode.getCameras().then(devices => {
-        numCameras = devices.length
-        if (devices && devices.length) {
-          if (currentCamera >= devices.length) {
-            switchCamera()
-            return
-          }
-          var cameraId = devices[currentCamera].id;
-
-          html5QrCode = new Html5Qrcode("camera-out");
-
-          document.getElementById("camera-control").style.display = 'flex';
-
-          html5QrCode.start(
-          cameraId,     // retreived in the previous step.
-          {
-            fps: 10,    // sets the framerate to 10 frame per second
-            qrbox: 250  // sets only 250 X 250 region of viewfinder to
-                        // scannable, rest shaded.
-          },
-          qrCodeMessage => {
-            // do something when code is read. For example:
-            jsonResult = JSON.parse(qrCodeMessage.trim());
-
-            const pretty = JSON.stringify(jsonResult, (k,v) => {
-              return typeof v === 'string' ? v.substring(0,6) + '...' + v.substring(v.length - 4) : v
-            }, 2);
-            document.getElementById("message").innerHTML = '<pre>' + pretty + '</pre>'
-
-            stopCamera()
-
-            prepareTransaction()
-          },
-          errorMessage => {
-            // Camera running, but no QR code
-          })
-          .catch(err => {
-            alert("Error starting camera")
-            html5QrCode = undefined
-            console.log(err)
-          });
-        }
-      }).catch(err => {
-        alert("Error selecting camera")
-        console.log(err)
-      });
+      const jsonText = window.prompt('Enter JSON')
+      jsonResult = JSON.parse(jsonText.trim());
+      const pretty = JSON.stringify(jsonResult, (k,v) => {
+        return typeof v === 'string' ? v.substring(0,6) + '...' + v.substring(v.length - 4) : v
+      }, 2);
+      document.getElementById("message").innerHTML = '<pre>' + pretty + '</pre>'
+      prepareTransaction()
     }
 
     async function burn() {
@@ -244,6 +205,7 @@
       .send({ from: providerAddress })
       .on('error', (error) => {
         sending = false;
+        console.log(error)
         alert(`Redeem failed (${error.message.split('\n')[0]})`);
       })
       .on('receipt', (receipt) => {
